@@ -28,7 +28,7 @@ function get(req, res) {
     'Content-Type': 'text/event-stream',
     'Access-Control-Allow-Origin': '*'
   })
-  res.write(': This is a sse stream, use EventSource to read from it')
+  res.write(': This is a sse stream, use EventSource to read from it\n\n')
   connections.push(res)
   req.on('close', function () {
     connections.splice(connections.indexOf(res), 1)
