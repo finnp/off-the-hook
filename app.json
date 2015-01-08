@@ -1,0 +1,13 @@
+{
+  "name": "off-the-hook",
+  "description": "Distribute webhooks as streaming endpoints",
+  "repository": "https://github.com/finnp/off-the-hook",
+  "keywords": [
+    "github",
+    "webhook",
+    "hooks"
+  ],
+  "env": {
+    "POST_ENDPOINT": "<replace with some secret value>"
+  }
+}

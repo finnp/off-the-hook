@@ -1,41 +1,43 @@
-// var level = require('levelup')
-var routes = require('routes-router')
 var jsonBody = require('body/json')
 var ssejson = require('ssejson')
-
-// var db = level('./db')
-
 var http = require('http')
 
-var router = routes()
-router.addRoute('/hook/:id', function (req, res, opts) {
+var SECRET = process.env['SEND_ENDPOINT']
+var PORT = process.env['PORT'] || 8080
+
+function post(req, res) {
   // send hook here
   jsonBody(req, res, function (err, body) {
+    if(SECRET && req.url.indexOf(SECRET) !== 1) res.statusCode = 403
+    if(err) res.statusCode = 412
+    res.end()
+    if(res.statusCode !== 200) return
     connections.forEach(function (connection) {
       var input = ssejson.serialize()
       input.pipe(connection)
       input.write(body)
     })
-    res.end()
   })
-  
-})
+}
 
 var connections = []
 
-setInterval(function () {
-  console.log(connections.length)
-}, 500)
-
-router.addRoute('/events/:id', function (req, res, opts) {
+function get(req, res) {
   // i need to pipe to multiple
   res.setHeader('Content-Type', 'text/event-stream')
+  res.setHeader('Access-Control-Allow-Origin', '*')
   connections.push(res)
   req.on('close', function () {
     connections.splice(connections.indexOf(res), 1)
   })
   
-}) // receive messages from here
+} // receive messages from here
 
-http.createServer(router).listen(8080)
+
+http.createServer(function (req, res) {
+  if(req.method === 'POST') return post(req, res)
+  if(req.method === 'GET') return get(req, res)
+  res.statusCode = 405
+  res.end()
+}).listen(PORT)
 
