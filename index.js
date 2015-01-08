@@ -20,7 +20,14 @@ function post(req, res) {
   })
 }
 
+
 var connections = []
+
+setInterval(function () {
+  connections.forEach(function (connection) {
+    connection.write(': ping\n\n') // keep alive for heroku
+  })
+}, 30 * 1000)
 
 function get(req, res) {
   // i need to pipe to multiple
