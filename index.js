@@ -24,8 +24,10 @@ var connections = []
 
 function get(req, res) {
   // i need to pipe to multiple
-  res.setHeader('Content-Type', 'text/event-stream')
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Access-Control-Allow-Origin': '*'
+  })
   connections.push(res)
   req.on('close', function () {
     connections.splice(connections.indexOf(res), 1)
